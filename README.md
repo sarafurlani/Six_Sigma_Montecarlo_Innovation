@@ -1,9 +1,7 @@
 # Six_Sigma_Montecarlo_Innovation
 
-#----------------------------------------------------------
 # Load Libraries & Functions
 source("https://pastebin.com/raw/K5rqVMCE")
-#----------------------------------------------------------
 
 n = 100
 
