@@ -1,0 +1,351 @@
+#----------------------------------------------------------
+# Load Libraries & Functions
+source("https://pastebin.com/raw/K5rqVMCE")
+#----------------------------------------------------------
+
+n = 100
+
+dice1 = sample(1:6, n, replace = TRUE)
+dice2 = sample(1:6, n, replace = TRUE)
+dice3 = sample(1:6, n, replace = TRUE)
+
+print(dice1)
+print(dice2)
+print(dice3)
+
+hist(dice3)
+
+total = dice1 + dice2 + dice3
+print(total)
+
+hist(total)
+table(total)
+
+
+#----------------------------------------------------------
+# Task 1 - Random Generation of Categories, Integers
+#          Uniform Distribution
+#          Discrete Categories
+#----------------------------------------------------------
+
+# Generate Integers - Uniform Distribution
+
+sample(1:10, 4)                   # pick 4 times from seq 1 to 10
+sample(1:10, 20, replace = TRUE)  # pick 20 times from seq 1 to 10
+
+x = sample(c(1,5,7,12), 20, replace = TRUE)  # pick 20 times out of 1,5,7,12
+hist(x)
+
+x = sample(c(1,5,7,12), 10000, replace = TRUE)  # pick 10000 times out of 1,5,7,12
+hist(x)
+
+# Generate Integers - Binomial Distribution
+# Applies to only Pass/Fail, Heads/Tail cases
+
+
+# Generate integers using rbinom(n, size, prob)
+# prob = 0.9; probability of good products
+# size = trials (daily quantity produced = 100)
+# n = number of observations (days in a year = 365)
+# x = number of good products per day in 365 days
+
+x = rbinom(365, 100, 0.9)       
+hist(x); print(x[1:10])                     
+                             
+
+# Generate Integers - Poisson Distribution
+# Number of times an event can occur 
+# Number of arrivals/hour at petrol station
+# Not possible to count non-events
+
+x = rpois(100,1)             # rpois(n, lambda)
+hist(x); print(x[1:10])      # lambda = expected rate
+
+x = rpois(10000,1)             # Mean = 1
+mean(x); hist(x)
+
+
+x = rpois(10000,5)           # Mean = 5
+mean(x); hist(x); table(x)
+
+# Generate Integers - User Defined Distribution
+
+x = sample(c(1, 2, 3), size = 100, replace = TRUE, 
+           prob = c(0.5, 0.1, 0.4))
+print(x); hist(x)
+
+# Generate Discrete Categories - Uniform Distribution
+x = sample(c("Eastern","Central","Mountain","Pacific"), 
+           size = 50, replace = TRUE)
+print(x); table(x); barplot(table(x))
+
+# Generate Discrete Categories - User Defined Distribution
+x = sample(c("pass","fail"), size = 20, replace = TRUE, 
+           prob = c(0.85, 0.15))
+print(x); table(x); barplot(table(x))
+
+# Exercise - Generate These Categories
+#            A, E, I, O, U - 40% prob, uniform dist
+#            X, Y, Z       - 60% prob, uniform dist
+#            Total Number  - 1000
+
+
+#----------------------------------------------------------
+# Task 2 - Random Generation of Continuous Variables
+#          Uniform, Normal, Exponential Distribution
+#          Gamma, Triangular, Log-Normal
+#----------------------------------------------------------
+
+# Generate Continuous Data - Uniform Distribution
+x = runif(1000, 10,20)     # n, min, max
+hist(x); print(x[1:6])
+
+# Generate Continuous Data - Normal Distribution
+x = rnorm(1000, mean = 10, sd = 2)
+hist(x); print(x[1:6])
+
+# Generate Continuous Data - Exponential Distribution
+x = rexp(1000, rate = 0.25)  # mean = 1/rate
+hist(x); print(x[1:6])
+
+# Generate Continuous Data - Gamma Distribution
+
+x = rgamma(1000, shape = 1, rate = 0.25)   # mean = shape/rate
+hist(x); print(x[1:6]); mean(x)           
+
+x = rgamma(1000, shape = 2, rate = 0.5)    # mean = shape/rate
+hist(x); print(x[1:6]); mean(x); sd(x)     # sd = shape/rate^2    
+
+x = rgamma(1000, shape = 4, rate = 1)      # mean = shape/rate
+hist(x); print(x[1:6]); mean(x); sd(x)     # sd = shape/rate^2 
+
+x = rgamma(1000, shape = 16, rate = 4)     # mean = shape/rate
+hist(x); print(x[1:6]); mean(x); sd(x)     # sd = shape/rate^2     
+
+x = rgamma(1000, shape = 64, rate = 16)    # mean = shape/rate
+hist(x); print(x[1:6]); mean(x); sd(x)    # sd = shape/rate^2 
+
+x = rgamma(1000, shape = 640000, rate = 160000)     # mean = shape/rate
+hist(x); print(x[1:6]); mean(x); sd(x)
+
+# Triangular Distribution
+x = rtri(1000, 5, 15, 10)               # n, min, max, mid
+hist(x); print(x[1:6]); mean(x)         
+
+# Generate Continuous Data - Lognormal Distribution
+MeanLog = GetLogMeanSD(50,20)[1]  # provide mean and std dev
+SDLog   = GetLogMeanSD(50,20)[2]  # provide mean and std dev
+
+x = rlnorm(1000, MeanLog, SDLog)
+hist(x)
+
+# Exercise - Generate 1000 Continuous Values
+#      Picked Randomly, 30% from A, 70% from B
+#      A - Normal Dist, Mean = 100, Stdev = 12
+#      B - Exponential Dist, Rate = 0.01
+
+x = rnorm(300, 100, 12)
+y = rexp(700, 0.01)
+
+z = sample(c(x,y), size = 1000)
+hist(z)
+
+#----------------------------------------------------------
+# Task 3 - Transfer Function; Y = function(X1, X2, etc)
+#          Triange made of 3 bars, AB, BC, CA 
+#          See https://pasteboard.co/JMPvQPaY.png
+#          Each bar is 100 units in length
+#          Angle C is 60 degrees as designed
+#          Mfg variation in bars +/- 1.0 
+#          Calculate Angle Distribution
+#----------------------------------------------------------
+
+# Normal Way - Calculating Avg 
+
+AB = 99.8; BC = 100.12; CA = 99.94
+
+AngleC = acos( (BC^2 + CA^2 - AB^2) / (2*BC*CA) )  # cosine law
+AngleC = AngleC * 180/pi                           # radians to degrees
+
+cat("\n", "AngleC :", AngleC, "\n")
+
+# Simulating Distribution of Angle-C
+
+AB = rnorm(1000, 100, 1/3)   # 99.73 % fall within 3 std devs
+BC = rnorm(1000, 100, 1/3)
+CA = rnorm(1000, 100, 1/3)
+
+AngleC = acos( (BC^2 + CA^2 - AB^2) / (2*BC*CA) )   # cosine law
+AngleC = AngleC * 180/pi                            # radians to degrees
+
+AngleC[1:10]; mean(AngleC); sd(AngleC)
+hist(AngleC)
+
+#----------------------------------------------------------
+# Task 4 - Transfer Function; Y = function(X1, X2, etc)
+#          Florist Business 
+#          Small, Medium, Large (Profit: $5, $7, $10)
+#          Avg. Orders (20,15,10)
+#          Cake Orders (Profit: $10) - 5% orders
+#          Chocolates  (Profit: $3)  - 10% orders
+#          If > 50 bouquets are in a day
+#               handling costs 10% of the profit
+#          Calculate Annual Profit Distribution
+#----------------------------------------------------------
+
+VS = 20; VM = 15; VL = 10     
+PS = 5;  PM = 7;  PL = 10  
+XCake = 0.05; XChoc = 0.10
+PCake =  10;  PChoc = 3; Max = 50
+
+VCake = XCake * (VS+VM+VL) 
+VChoc = XChoc * (VS+VM+VL)    
+
+# Step 1 - Using R Function As A Transfer Function 
+
+GetProfit <- function(VS,VM,VL, PS,PM,PL, VCake,VChoc, PCake,PChoc, Max) {
+  Profit = VS*PS + VM*PM + VL*PL + 
+  VCake*PCake + VChoc*PChoc
+  if(VS+VM+VL > Max) Profit = 0.9 * Profit
+  return(Profit)
+}
+
+GetProfit(VS,VM,VL, PS,PM,PL, VCake,VChoc, PCake,PChoc, Max)
+
+GetProfit(VS+5,VM,VL, PS,PM,PL, VCake,VChoc, PCake,PChoc+3, Max)
+
+# Step 2 - Generate Simulated Xs
+#          From Statistical Distributions
+#          Vectors prefixed with "x"
+
+nsim = 365                # Days in the Year
+
+xVS = rpois(nsim, VS)     # Daily Qty of Small Boquets
+xVM = rpois(nsim, VM)     # Daily Qty of Medium Boquets
+xVL = rpois(nsim, VL)     # Daily Qty of Large Boquets
+
+xVCake = rbinom(nsim, VS+VM+VL, XCake) # Daily Qty of Cake Orders
+xVChoc = rbinom(nsim, VS+VM+VL, XChoc) # Daily Qty of Choc Orders
+
+Xtable = data.frame(Qty_Small    = xVS, 
+                    Qty_Medium   = xVM,
+                    Qty_Large    = xVL,
+                    Price_Small  = 5, 
+                    Price_Medium = 7,
+                    Price_Large  = 10,
+                    Qty_Cake     = xVCake,
+                    Qty_Choc     = xVChoc,
+                    Price_Cake   = 10,
+                    Price_Choc   = 3,
+                    Qty_Penalty  = 50)
+
+head(Xtable)
+
+# Step 3 - Generate Simulated Y & Analyse
+#          Apply Function To Simulated Xs
+
+Profit = SimulateY(GetProfit, Xtable)
+hist(Profit)
+
+cat("\n", "Avg Daily Profit    :", mean(Profit), "\n",
+    "Total Annual Profit :", sum(Profit), "\n","\n")
+
+# What is the chance the Florist makes atleast $300/day
+length(Profit)
+length(Profit[Profit >= 300]) / length(Profit)
+
+# Export Data Into A Spreadsheet
+cbind(Xtable,Profit)[1:5,]
+write.csv(cbind(Xtable,Profit), "out.csv")
+
+# Exercise - Plot Change In Profit Histogram
+#      if the price of Small Boquets (PS)
+#      is increased by 1% 
+
+Xtable1 = Xtable;
+Xtable1$Price_Small = Xtable$Price_Small * 1.01
+
+Profit0 = SimulateY(GetProfit, Xtable)
+Profit1 = SimulateY(GetProfit, Xtable1)
+
+
+hist(Profit1 - Profit0)
+100*mean(Profit1 - Profit0)/mean(Profit0)
+
+#----------------------------------------------------------
+# Task 5 - Sensitivity Analysis
+#          When Xs are changed by 1%
+#          Find % change in Y 
+#          Find the most sensitive Xs 
+#----------------------------------------------------------
+
+# METHOD A - Sensitivity of Transfer Function
+#            Determined at a given X values
+
+# Step1  - Define the Transfer Function
+GetProfit <- function(VS,VM,VL, PS,PM,PL, VCake,VChoc, PCake,PChoc, Max) {
+  Profit = VS*PS + VM*PM + VL*PL + 
+    VCake*PCake + VChoc*PChoc
+  if(VS+VM+VL > Max) Profit = 0.9 * Profit
+  return(Profit)
+}
+
+# Step 2 - Define a List of Variables with Values
+Xvals = list(QtySmall = 20, 
+          QtyMedium   = 15,
+          QtyLarge    = 10,
+          PriceSmall  = 5, 
+          PriceMedium = 7,
+          PriceLarge  = 10,
+          QtyCake     = 0.05*(20+15+10),
+          QtyChoc     = 0.10*(20+15+10),
+          PriceCake   = 10,
+          PriceChoc   = 3,
+          QtyPentalty = 50)
+
+# Step 3 - Run the Sensitivity Analysis Function
+#          Calculated At The Current X values
+
+S = MonteCarloSens(GetProfit, Xvals)
+print(S)
+
+
+# METHOD B - Sensitivity of Transfer Function
+#            Over the range of Simulated Xs 
+
+# Step 1 - Define the Transfer Function
+
+# Step 2 - Read Data File with X Distribution Data
+Xparm = read.csv("Monte Carlo Analysis.csv")
+print(Xparm)
+
+# Step 3 - Convert Xparm data into Xtable (Simulated Xs)
+#          Xtable can be manually created as in Task 4
+Xtable = SimulateX(1000, GetProfit, Xparm)
+head(Xtable)
+
+
+# Step 4 - Simulated Y Values (Optional)
+SimulateY(GetProfit,Xtable)
+
+# Step 5 - Run the Sensitivity Analysis Function
+#          Calculated At All Simulated Xs
+#          Boxplots give a range of sensitivity values
+#          Dark line in the centre is Median
+#          Coloured box -  Inter Quartile Range (IQR)
+#          Whiskers (Q1 - 1.5*IQR) to (Q3 + 1.5*IQR)
+
+S = MonteCarloSens2(GetProfit, Xtable)
+print(S)
+
+# Sensitivity of Loan/ Mortgage Formula
+# Input - Loan Amount, Term (Months), Rate (Annual)
+# Output - Monthly Repayment
+
+MonthlyPayment(10000,36,5)
+
+Xval = list(Loan = 10000,
+            Term = 36,
+            Rate = 5.0)
+
+MonteCarloSens(MonthlyPayment, Xval)
